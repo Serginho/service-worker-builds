@@ -1888,6 +1888,7 @@ class Driver {
             const manifest = current.manifest;
             if (manifest.push) {
                 const req = this.adapter.newRequest(manifest.push.url, {
+                    method: 'POST',
                     body: JSON.stringify({ oldSubscription: event.oldSubscription, newSubscription: event.newSubscription })
                 });
                 const response = await this.scope.fetch(req);
