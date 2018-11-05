@@ -1,5 +1,5 @@
 /**
- * @license Angular v5.2.11-4009dbb2a
+ * @license Angular v5.2.11-a3213578b
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -250,7 +250,7 @@ var SwPush = /** @class */ (function () {
                 subscription: null
             };
             if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
-                pushData.subscription = /** @type {?} */ (subscription);
+                pushData.subscription = JSON.parse(JSON.stringify(subscription));
             }
             _this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
         });
