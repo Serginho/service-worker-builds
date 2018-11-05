@@ -1,5 +1,5 @@
 /**
- * @license Angular v5.2.11-98115e075
+ * @license Angular v5.2.11-4009dbb2a
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -230,6 +230,7 @@ var NgswCommChannel = /** @class */ (function () {
  */
 var SwPush = /** @class */ (function () {
     function SwPush(sw) {
+        var _this = this;
         this.sw = sw;
         this.subscriptionChanges = new Subject();
         if (!sw.isEnabled) {
@@ -242,6 +243,17 @@ var SwPush = /** @class */ (function () {
         this.pushManager = /** @type {?} */ ((map.call(this.sw.registration, function (registration) { return registration.pushManager; })));
         var /** @type {?} */ workerDrivenSubscriptions = /** @type {?} */ ((switchMap.call(this.pushManager, function (pm) { return pm.getSubscription().then(function (sub) { return sub; }); })));
         this.subscription = merge(workerDrivenSubscriptions, this.subscriptionChanges);
+        this.subscription.subscribe(function (subscription) {
+            var /** @type {?} */ pushData = {
+                action: 'STATUS_PUSH',
+                statusNonce: _this.sw.generateNonce(),
+                subscription: null
+            };
+            if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
+                pushData.subscription = /** @type {?} */ (subscription);
+            }
+            _this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
+        });
     }
     Object.defineProperty(SwPush.prototype, "isEnabled", {
         /**
@@ -295,12 +307,12 @@ var SwPush = /** @class */ (function () {
         if (!this.sw.isEnabled) {
             return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
         }
-        var /** @type {?} */ unsubscribe = switchMap.call(this.subscription, function (sub) {
+        var /** @type {?} */ subscribeOnce = take.call(this.subscription, 1);
+        var /** @type {?} */ unsubscribe = switchMap.call(subscribeOnce, function (sub) {
             if (sub !== null) {
                 return sub.unsubscribe().then(function (success) {
                     if (success) {
                         _this.subscriptionChanges.next(null);
-                        return undefined;
                     }
                     else {
                         throw new Error('Unsubscribe failed!');
@@ -311,8 +323,7 @@ var SwPush = /** @class */ (function () {
                 throw new Error('Not subscribed to push notifications.');
             }
         });
-        var /** @type {?} */ unsubscribeOnce = take.call(unsubscribe, 1);
-        return /** @type {?} */ (toPromise.call(unsubscribeOnce));
+        return /** @type {?} */ (toPromise.call(unsubscribe));
     };
     SwPush.decorators = [
         { type: Injectable },

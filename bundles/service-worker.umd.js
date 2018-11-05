@@ -1,5 +1,5 @@
 /**
- * @license Angular v5.2.11-98115e075
+ * @license Angular v5.2.11-4009dbb2a
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -36,7 +36,7 @@ var __assign = Object.assign || function __assign(t) {
 };
 
 /**
- * @license Angular v5.2.11-98115e075
+ * @license Angular v5.2.11-4009dbb2a
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -248,6 +248,7 @@ var NgswCommChannel = /** @class */ (function () {
  */
 var SwPush = /** @class */ (function () {
     function SwPush(sw) {
+        var _this = this;
         this.sw = sw;
         this.subscriptionChanges = new rxjs_Subject.Subject();
         if (!sw.isEnabled) {
@@ -260,6 +261,17 @@ var SwPush = /** @class */ (function () {
         this.pushManager = /** @type {?} */ ((rxjs_operator_map.map.call(this.sw.registration, function (registration) { return registration.pushManager; })));
         var /** @type {?} */ workerDrivenSubscriptions = /** @type {?} */ ((rxjs_operator_switchMap.switchMap.call(this.pushManager, function (pm) { return pm.getSubscription().then(function (sub) { return sub; }); })));
         this.subscription = rxjs_observable_merge.merge(workerDrivenSubscriptions, this.subscriptionChanges);
+        this.subscription.subscribe(function (subscription) {
+            var /** @type {?} */ pushData = {
+                action: 'STATUS_PUSH',
+                statusNonce: _this.sw.generateNonce(),
+                subscription: null
+            };
+            if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
+                pushData.subscription = /** @type {?} */ (subscription);
+            }
+            _this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
+        });
     }
     Object.defineProperty(SwPush.prototype, "isEnabled", {
         /**
@@ -313,12 +325,12 @@ var SwPush = /** @class */ (function () {
         if (!this.sw.isEnabled) {
             return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
         }
-        var /** @type {?} */ unsubscribe = rxjs_operator_switchMap.switchMap.call(this.subscription, function (sub) {
+        var /** @type {?} */ subscribeOnce = rxjs_operator_take.take.call(this.subscription, 1);
+        var /** @type {?} */ unsubscribe = rxjs_operator_switchMap.switchMap.call(subscribeOnce, function (sub) {
             if (sub !== null) {
                 return sub.unsubscribe().then(function (success) {
                     if (success) {
                         _this.subscriptionChanges.next(null);
-                        return undefined;
                     }
                     else {
                         throw new Error('Unsubscribe failed!');
@@ -329,8 +341,7 @@ var SwPush = /** @class */ (function () {
                 throw new Error('Not subscribed to push notifications.');
             }
         });
-        var /** @type {?} */ unsubscribeOnce = rxjs_operator_take.take.call(unsubscribe, 1);
-        return /** @type {?} */ (rxjs_operator_toPromise.toPromise.call(unsubscribeOnce));
+        return /** @type {?} */ (rxjs_operator_toPromise.toPromise.call(unsubscribe));
     };
     SwPush.decorators = [
         { type: _angular_core.Injectable },

@@ -1,5 +1,5 @@
 /**
- * @license Angular v5.2.11-98115e075
+ * @license Angular v5.2.11-4009dbb2a
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -191,6 +191,17 @@ class SwPush {
         this.pushManager = /** @type {?} */ ((map.call(this.sw.registration, (registration) => { return registration.pushManager; })));
         const /** @type {?} */ workerDrivenSubscriptions = /** @type {?} */ ((switchMap.call(this.pushManager, (pm) => pm.getSubscription().then(sub => { return sub; }))));
         this.subscription = merge(workerDrivenSubscriptions, this.subscriptionChanges);
+        this.subscription.subscribe(subscription => {
+            let /** @type {?} */ pushData = {
+                action: 'STATUS_PUSH',
+                statusNonce: this.sw.generateNonce(),
+                subscription: null
+            };
+            if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
+                pushData.subscription = /** @type {?} */ (subscription);
+            }
+            this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
+        });
     }
     /**
      * Returns true if the Service Worker is enabled (supported by the browser and enabled via
@@ -227,12 +238,12 @@ class SwPush {
         if (!this.sw.isEnabled) {
             return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
         }
-        const /** @type {?} */ unsubscribe = switchMap.call(this.subscription, (sub) => {
+        const /** @type {?} */ subscribeOnce = take.call(this.subscription, 1);
+        const /** @type {?} */ unsubscribe = switchMap.call(subscribeOnce, (sub) => {
             if (sub !== null) {
                 return sub.unsubscribe().then(success => {
                     if (success) {
                         this.subscriptionChanges.next(null);
-                        return undefined;
                     }
                     else {
                         throw new Error('Unsubscribe failed!');
@@ -243,8 +254,7 @@ class SwPush {
                 throw new Error('Not subscribed to push notifications.');
             }
         });
-        const /** @type {?} */ unsubscribeOnce = take.call(unsubscribe, 1);
-        return /** @type {?} */ (toPromise.call(unsubscribeOnce));
+        return /** @type {?} */ (toPromise.call(unsubscribe));
     }
 }
 SwPush.decorators = [

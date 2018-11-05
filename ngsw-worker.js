@@ -1665,6 +1665,10 @@ function isMsgActivateUpdate(msg) {
     return msg.action === 'ACTIVATE_UPDATE';
 }
 
+function isMsgStatusPush(msg) {
+    return msg.action === 'STATUS_PUSH';
+}
+
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -1691,11 +1695,12 @@ var DriverReadyState;
     DriverReadyState[DriverReadyState["SAFE_MODE"] = 2] = "SAFE_MODE";
 })(DriverReadyState || (DriverReadyState = {}));
 class Driver {
-    constructor(scope, adapter, db) {
+    constructor(scope, adapter, db, localStorage) {
         // Set up all the event handlers that the SW needs.
         this.scope = scope;
         this.adapter = adapter;
         this.db = db;
+        this.localStorage = localStorage;
         /**
          * Tracks the current readiness condition under which the SW is operating.
          * This controls whether the SW attempts to respond to some or all requests.
@@ -1769,8 +1774,13 @@ class Driver {
         this.scope.addEventListener('fetch', (event) => this.onFetch(event));
         this.scope.addEventListener('message', (event) => this.onMessage(event));
         this.scope.addEventListener('push', (event) => this.onPush(event));
-        this.scope.addEventListener('pushsubscriptionchange', (event) => this.onPushSubscriptionChange(event));
+        this.scope.addEventListener('pushsubscriptionchange', (event) => event ? event.waitUntil(this.handlePushStatus()) : true);
         this.scope.addEventListener('notificationclick', (event) => this.onNotificationClick(event));
+        this.scope.addEventListener('sync', (event) => {
+            if (event && event.tag === 'push_sync') {
+                event.waitUntil(this.handlePushStatus());
+            }
+        });
         // The debugger generates debug pages in response to debugging requests.
         this.debugger = new DebugHandler(this, this.adapter);
         // The IdleScheduler will execute idle tasks after a given delay.
@@ -1909,6 +1919,67 @@ class Driver {
         }
         else if (isMsgActivateUpdate(msg)) {
             await this.reportStatus(from, this.updateClient(from), msg.statusNonce);
+        }
+        else if (isMsgStatusPush(msg)) {
+            await this.reportStatus(from, this.handleRequestedPush(msg.subscription), msg.statusNonce);
+        }
+    }
+    async handleRequestedPush(subscription) {
+        try {
+            await this.localStorage.open();
+            if (subscription) {
+                await this.localStorage.setItem('subscription', JSON.stringify(subscription));
+                await this.enablePushSync();
+            }
+            else {
+                await this.localStorage.removeItem('subscription');
+            }
+        }
+        catch (e) {
+            this.debugger.log(e);
+        }
+        finally {
+            this.localStorage.close();
+        }
+    }
+    async handlePushStatus() {
+        try {
+            await this.localStorage.open();
+            const pushManager = this.scope.registration.pushManager;
+            const pushState = await pushManager.permissionState({ userVisibleOnly: true });
+            if (pushState === 'granted') {
+                const subscription = await pushManager.getSubscription();
+                if (subscription) {
+                    const oldRawSubscription = await this.localStorage.getItem('subscription');
+                    await this.localStorage.setItem('subscription', JSON.stringify(subscription));
+                    if (oldRawSubscription) {
+                        const oldSubscription = JSON.parse(oldRawSubscription);
+                        if (oldSubscription.endpoint !== subscription.endpoint) {
+                            this.onPushSubscriptionChange({
+                                oldSubscription: oldSubscription,
+                                newSubscription: subscription
+                            });
+                        }
+                    }
+                }
+                else {
+                    this.debugger.log('Handle push status enabled but no subscription.');
+                }
+            }
+        }
+        catch (e) {
+            this.debugger.log(e);
+        }
+        finally {
+            this.localStorage.close();
+        }
+    }
+    async enablePushSync() {
+        if (this.scope.registration.sync) {
+            const tags = await this.scope.registration.sync.getTags();
+            if (!tags.find(t => t === 'push_sync')) {
+                await this.scope.registration.sync.register('push_sync');
+            }
         }
     }
     async handlePush(data) {
@@ -2558,8 +2629,99 @@ function errorToString(error) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
+/**
+ * Implementation of local storage over browser indexed database
+ */
+class IndexedDbLocalStorage {
+    constructor() {
+    }
+    open() {
+        // @ts-ignore
+        return new Promise((resolve, reject) => {
+            const connection = indexedDB.open(IndexedDbLocalStorage.DBNAME, 1);
+            connection.onsuccess = (ev) => {
+                this.database = ev.target.result;
+                resolve();
+            };
+            connection.onerror = reject;
+            connection.onupgradeneeded = e => {
+                const db = e.target.result;
+                db.createObjectStore(IndexedDbLocalStorage.DBTABLE, { keyPath: 'key' });
+            };
+        });
+    }
+    clear() {
+        this.close();
+        // @ts-ignore
+        return new Promise(((resolve, reject) => {
+            const req = indexedDB.deleteDatabase(IndexedDbLocalStorage.DBNAME);
+            req.onsuccess = e => resolve();
+            req.onerror = reject;
+        }));
+    }
+    getItem(key) {
+        // @ts-ignore
+        return new Promise(((resolve, reject) => {
+            if (this.database) {
+                const req = this.database.transaction([IndexedDbLocalStorage.DBTABLE])
+                    .objectStore(IndexedDbLocalStorage.DBTABLE).get(key);
+                req.onsuccess = () => resolve(req.result ? req.result.value : null);
+                req.onerror = reject;
+            }
+            else {
+                reject(new Error('Connection closed or not open'));
+            }
+        }));
+    }
+    removeItem(key) {
+        // @ts-ignore
+        return new Promise(((resolve, reject) => {
+            if (this.database) {
+                const req = this.database.transaction([IndexedDbLocalStorage.DBTABLE], 'readwrite')
+                    .objectStore(IndexedDbLocalStorage.DBTABLE).delete(key);
+                req.onsuccess = () => resolve();
+                req.onerror = reject;
+            }
+            else {
+                reject(new Error('Connection closed or not open'));
+            }
+        }));
+    }
+    setItem(key, data) {
+        // @ts-ignore
+        return new Promise(((resolve, reject) => {
+            if (this.database) {
+                const req = this.database.transaction([IndexedDbLocalStorage.DBTABLE], 'readwrite')
+                    .objectStore(IndexedDbLocalStorage.DBTABLE)
+                    .put({ key: key, value: data });
+                req.onsuccess = () => resolve();
+                req.onerror = reject;
+                req.onblocked = reject;
+            }
+            else {
+                reject(new Error('Connection closed or not open'));
+            }
+        }));
+    }
+    close() {
+        if (this.database) {
+            this.database.close();
+            this.database = null;
+        }
+    }
+}
+IndexedDbLocalStorage.DBNAME = 'tlLocalStorage';
+IndexedDbLocalStorage.DBTABLE = 'storage';
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
 const scope = self;
 const adapter = new Adapter();
-const driver = new Driver(scope, adapter, new CacheDatabase(scope, adapter));
+const driver = new Driver(scope, adapter, new CacheDatabase(scope, adapter), new IndexedDbLocalStorage());
 
 }());
