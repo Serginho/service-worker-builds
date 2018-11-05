@@ -2634,12 +2634,18 @@ function errorToString(error) {
  */
 class IndexedDbLocalStorage {
     constructor() {
+        this.sessions = 0;
     }
     open() {
+        if (this.database) {
+            this.sessions++;
+            return Promise.resolve();
+        }
         // @ts-ignore
         return new Promise((resolve, reject) => {
             const connection = indexedDB.open(IndexedDbLocalStorage.DBNAME, 1);
             connection.onsuccess = (ev) => {
+                this.sessions++;
                 this.database = ev.target.result;
                 resolve();
             };
@@ -2704,7 +2710,8 @@ class IndexedDbLocalStorage {
         }));
     }
     close() {
-        if (this.database) {
+        this.sessions--;
+        if (this.database && this.sessions == 0) {
             this.database.close();
             this.database = null;
         }
