@@ -2641,8 +2641,12 @@ class IndexedDbLocalStorage {
             this.sessions++;
             return Promise.resolve();
         }
+        if (this.initializing) {
+            this.sessions++;
+            return this.initializing;
+        }
         // @ts-ignore
-        return new Promise((resolve, reject) => {
+        this.initializing = new Promise((resolve, reject) => {
             const connection = indexedDB.open(IndexedDbLocalStorage.DBNAME, 1);
             connection.onsuccess = (ev) => {
                 this.sessions++;
@@ -2654,7 +2658,12 @@ class IndexedDbLocalStorage {
                 const db = e.target.result;
                 db.createObjectStore(IndexedDbLocalStorage.DBTABLE, { keyPath: 'key' });
             };
+        }).then(() => this.initializing = null, () => {
+            this.sessions = 0;
+            this.initializing = null;
         });
+        // @ts-ignore
+        return this.initializing;
     }
     clear() {
         this.close();
