@@ -1,8 +1,9 @@
 /**
- * @license Angular v7.0.3-68104e067
+ * @license Angular v7.0.3+2.sha-628081c.with-local-changes
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
+
 import { __awaiter } from 'tslib';
 
 /**
@@ -136,13 +137,6 @@ function globToRegex(glob, literalQuestionMark = false) {
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
  */
 /** @type {?} */
 const DEFAULT_NAVIGATION_URLS = [
@@ -343,18 +337,12 @@ function withOrderedKeys(unorderedObj) {
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+
 /**
  * Generated bundle index. Do not edit.
  */

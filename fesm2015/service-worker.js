@@ -1,49 +1,20 @@
 /**
- * @license Angular v7.0.3-68104e067
+ * @license Angular v7.0.3+2.sha-628081c.with-local-changes
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
-import { isPlatformBrowser } from '@angular/common';
-import { APP_INITIALIZER, ApplicationRef, Injectable, InjectionToken, Injector, NgModule, PLATFORM_ID } from '@angular/core';
+
+import { concat, defer, fromEvent, of, throwError, NEVER, Subject, merge } from 'rxjs';
 import { filter, map, publish, switchMap, take, tap } from 'rxjs/operators';
-import { NEVER, Subject, concat, defer, fromEvent, merge, of, throwError } from 'rxjs';
+import { Injectable, APP_INITIALIZER, ApplicationRef, InjectionToken, Injector, NgModule, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 /** @type {?} */
 const ERR_SW_NOT_SUPPORTED = 'Service workers are disabled or not supported by this browser';
-/**
- * An event emitted when a new version of the app is available.
- *
- * \@publicApi
- * @record
- */
-
-/**
- * An event emitted when a new version of the app has been downloaded and activated.
- *
- * \@publicApi
- * @record
- */
-
-/**
- * An event emitted when a `PushEvent` is received by the service worker.
- * @record
- */
-
-/**
- * @record
- */
-
 /**
  * @param {?} message
  * @return {?}
@@ -159,13 +130,6 @@ class NgswCommChannel {
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
 /**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-/**
  * Subscribe and listen to push notifications from the Service Worker.
  *
  * \@publicApi
@@ -259,7 +223,7 @@ class SwPush {
     decodeBase64(input) { return atob(input); }
 }
 SwPush.decorators = [
-    { type: Injectable },
+    { type: Injectable }
 ];
 /** @nocollapse */
 SwPush.ctorParameters = () => [
@@ -269,13 +233,6 @@ SwPush.ctorParameters = () => [
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
  */
 /**
  * Subscribe to update notifications from the Service Worker, trigger update
@@ -327,7 +284,7 @@ class SwUpdate {
     }
 }
 SwUpdate.decorators = [
-    { type: Injectable },
+    { type: Injectable }
 ];
 /** @nocollapse */
 SwUpdate.ctorParameters = () => [
@@ -337,13 +294,6 @@ SwUpdate.ctorParameters = () => [
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
  */
 /**
  * @abstract
@@ -430,47 +380,28 @@ class ServiceWorkerModule {
 ServiceWorkerModule.decorators = [
     { type: NgModule, args: [{
                 providers: [SwPush, SwUpdate],
-            },] },
+            },] }
 ];
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-/**
- * @module
- * @description
- * Entry point for all public APIs of this package.
- */
-
 // This file only reexports content of the `src` folder. Keep it that way.
 
 /**
  * @fileoverview added by tsickle
  * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
  */
+
 /**
  * Generated bundle index. Do not edit.
  */
 
-export { ServiceWorkerModule, SwPush, SwUpdate, NgswCommChannel as ɵa, RegistrationOptions as ɵb, SCRIPT as ɵc, ngswAppInitializer as ɵd, ngswCommChannelFactory as ɵe };
+export { NgswCommChannel as ɵangular_packages_service_worker_service_worker_a, RegistrationOptions as ɵangular_packages_service_worker_service_worker_b, SCRIPT as ɵangular_packages_service_worker_service_worker_c, ngswAppInitializer as ɵangular_packages_service_worker_service_worker_d, ngswCommChannelFactory as ɵangular_packages_service_worker_service_worker_e, ServiceWorkerModule, SwPush, SwUpdate };
 //# sourceMappingURL=service-worker.js.map

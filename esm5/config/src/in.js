@@ -1,76 +1,9 @@
 /**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
  * @license
  * Copyright Google Inc. All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** @typedef {?} */
-var Glob;
-export { Glob };
-/** @typedef {?} */
-var Duration;
-export { Duration };
-/**
- * A top-level Angular Service Worker configuration object.
- *
- * \@publicApi
- * @record
- */
-export function Config() { }
-/** @type {?|undefined} */
-Config.prototype.appData;
-/** @type {?} */
-Config.prototype.index;
-/** @type {?|undefined} */
-Config.prototype.push;
-/** @type {?|undefined} */
-Config.prototype.assetGroups;
-/** @type {?|undefined} */
-Config.prototype.dataGroups;
-/** @type {?|undefined} */
-Config.prototype.navigationUrls;
-/**
- * Configuration for handling push subscription changes.
- *
- * \@experimental
- * @record
- */
-export function PushConfig() { }
-/** @type {?} */
-PushConfig.prototype.url;
-/**
- * Configuration for a particular group of assets.
- *
- * \@publicApi
- * @record
- */
-export function AssetGroup() { }
-/** @type {?} */
-AssetGroup.prototype.name;
-/** @type {?|undefined} */
-AssetGroup.prototype.installMode;
-/** @type {?|undefined} */
-AssetGroup.prototype.updateMode;
-/** @type {?} */
-AssetGroup.prototype.resources;
-/**
- * Configuration for a particular group of dynamic URLs.
- *
- * \@publicApi
- * @record
- */
-export function DataGroup() { }
-/** @type {?} */
-DataGroup.prototype.name;
-/** @type {?} */
-DataGroup.prototype.urls;
-/** @type {?|undefined} */
-DataGroup.prototype.version;
-/** @type {?} */
-DataGroup.prototype.cacheConfig;
-//# sourceMappingURL=in.js.map
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW4uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi8uLi9wYWNrYWdlcy9zZXJ2aWNlLXdvcmtlci9jb25maWcvc3JjL2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7R0FNRyIsInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogQGxpY2Vuc2VcbiAqIENvcHlyaWdodCBHb29nbGUgSW5jLiBBbGwgUmlnaHRzIFJlc2VydmVkLlxuICpcbiAqIFVzZSBvZiB0aGlzIHNvdXJjZSBjb2RlIGlzIGdvdmVybmVkIGJ5IGFuIE1JVC1zdHlsZSBsaWNlbnNlIHRoYXQgY2FuIGJlXG4gKiBmb3VuZCBpbiB0aGUgTElDRU5TRSBmaWxlIGF0IGh0dHBzOi8vYW5ndWxhci5pby9saWNlbnNlXG4gKi9cblxuLyoqXG4gKiBAcHVibGljQXBpXG4gKi9cbmV4cG9ydCB0eXBlIEdsb2IgPSBzdHJpbmc7XG5cbi8qKlxuICogQHB1YmxpY0FwaVxuICovXG5leHBvcnQgdHlwZSBEdXJhdGlvbiA9IHN0cmluZztcblxuLyoqXG4gKiBBIHRvcC1sZXZlbCBBbmd1bGFyIFNlcnZpY2UgV29ya2VyIGNvbmZpZ3VyYXRpb24gb2JqZWN0LlxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuZXhwb3J0IGludGVyZmFjZSBDb25maWcge1xuICBhcHBEYXRhPzoge307XG4gIGluZGV4OiBzdHJpbmc7XG4gIHB1c2g/OiBQdXNoQ29uZmlnO1xuICBhc3NldEdyb3Vwcz86IEFzc2V0R3JvdXBbXTtcbiAgZGF0YUdyb3Vwcz86IERhdGFHcm91cFtdO1xuICBuYXZpZ2F0aW9uVXJscz86IHN0cmluZ1tdO1xufVxuXG5cbi8qKlxuICogQ29uZmlndXJhdGlvbiBmb3IgaGFuZGxpbmcgcHVzaCBzdWJzY3JpcHRpb24gY2hhbmdlcy5cbiAqXG4gKiBAZXhwZXJpbWVudGFsXG4gKi9cbmV4cG9ydCBpbnRlcmZhY2UgUHVzaENvbmZpZyB7IHVybDogc3RyaW5nOyB9XG5cbi8qKlxuICogQ29uZmlndXJhdGlvbiBmb3IgYSBwYXJ0aWN1bGFyIGdyb3VwIG9mIGFzc2V0cy5cbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmV4cG9ydCBpbnRlcmZhY2UgQXNzZXRHcm91cCB7XG4gIG5hbWU6IHN0cmluZztcbiAgaW5zdGFsbE1vZGU/OiAncHJlZmV0Y2gnfCdsYXp5JztcbiAgdXBkYXRlTW9kZT86ICdwcmVmZXRjaCd8J2xhenknO1xuICByZXNvdXJjZXM6IHtcbiAgICBmaWxlcz86IEdsb2JbXTtcbiAgICAvKiogQGRlcHJlY2F0ZWQgQXMgb2YgdjYgYHZlcnNpb25lZEZpbGVzYCBhbmQgYGZpbGVzYCBvcHRpb25zIGhhdmUgdGhlIHNhbWUgYmVoYXZpb3IuIFVzZVxuICAgICAgIGBmaWxlc2AgaW5zdGVhZC4gKi9cbiAgICB2ZXJzaW9uZWRGaWxlcz86IEdsb2JbXTtcbiAgICB1cmxzPzogR2xvYltdO1xuICB9O1xufVxuXG4vKipcbiAqIENvbmZpZ3VyYXRpb24gZm9yIGEgcGFydGljdWxhciBncm91cCBvZiBkeW5hbWljIFVSTHMuXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5leHBvcnQgaW50ZXJmYWNlIERhdGFHcm91cCB7XG4gIG5hbWU6IHN0cmluZztcbiAgdXJsczogR2xvYltdO1xuICB2ZXJzaW9uPzogbnVtYmVyO1xuICBjYWNoZUNvbmZpZzoge1xuICAgIG1heFNpemU6IG51bWJlcjsgbWF4QWdlOiBEdXJhdGlvbjsgdGltZW91dD86IER1cmF0aW9uOyBzdHJhdGVneT86ICdmcmVzaG5lc3MnIHwgJ3BlcmZvcm1hbmNlJztcbiAgfTtcbn1cbiJdfQ==

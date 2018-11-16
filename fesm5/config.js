@@ -1,14 +1,11 @@
 /**
- * @license Angular v7.0.3-68104e067
+ * @license Angular v7.0.3+2.sha-628081c.with-local-changes
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
-import { __awaiter, __generator } from 'tslib';
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
+import { __awaiter, __generator, __spread } from 'tslib';
+
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -16,30 +13,20 @@ import { __awaiter, __generator } from 'tslib';
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** @type {?} */
 var PARSE_TO_PAIRS = /([0-9]+[^0-9]+)/g;
-/** @type {?} */
 var PAIR_SPLIT = /^([0-9]+)([dhmsu]+)$/;
-/**
- * @param {?} duration
- * @return {?}
- */
 function parseDurationToMs(duration) {
-    /** @type {?} */
     var matches = [];
-    /** @type {?} */
     var array;
     while ((array = PARSE_TO_PAIRS.exec(duration)) !== null) {
         matches.push(array[0]);
     }
     return matches
         .map(function (match) {
-        /** @type {?} */
         var res = PAIR_SPLIT.exec(match);
         if (res === null) {
             throw new Error("Not a valid duration: " + match);
         }
-        /** @type {?} */
         var factor = 0;
         switch (res[2]) {
             case 'd':
@@ -66,52 +53,33 @@ function parseDurationToMs(duration) {
 }
 
 /**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
  * @license
  * Copyright Google Inc. All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** @type {?} */
 var QUESTION_MARK = '[^/]';
-/** @type {?} */
 var WILD_SINGLE = '[^/]*';
-/** @type {?} */
 var WILD_OPEN = '(?:.+\\/)?';
-/** @type {?} */
 var TO_ESCAPE_BASE = [
     { replace: /\./g, with: '\\.' },
     { replace: /\+/g, with: '\\+' },
     { replace: /\*/g, with: WILD_SINGLE },
 ];
-/** @type {?} */
-var TO_ESCAPE_WILDCARD_QM = TO_ESCAPE_BASE.concat([
+var TO_ESCAPE_WILDCARD_QM = __spread(TO_ESCAPE_BASE, [
     { replace: /\?/g, with: QUESTION_MARK },
 ]);
-/** @type {?} */
-var TO_ESCAPE_LITERAL_QM = TO_ESCAPE_BASE.concat([
+var TO_ESCAPE_LITERAL_QM = __spread(TO_ESCAPE_BASE, [
     { replace: /\?/g, with: '\\?' },
 ]);
-/**
- * @param {?} glob
- * @param {?=} literalQuestionMark
- * @return {?}
- */
 function globToRegex(glob, literalQuestionMark) {
     if (literalQuestionMark === void 0) { literalQuestionMark = false; }
-    /** @type {?} */
     var toEscape = literalQuestionMark ? TO_ESCAPE_LITERAL_QM : TO_ESCAPE_WILDCARD_QM;
-    /** @type {?} */
     var segments = glob.split('/').reverse();
-    /** @type {?} */
     var regex = '';
     while (segments.length > 0) {
-        /** @type {?} */
-        var segment = /** @type {?} */ ((segments.pop()));
+        var segment = segments.pop();
         if (segment === '**') {
             if (segments.length > 0) {
                 regex += WILD_OPEN;
@@ -121,7 +89,6 @@ function globToRegex(glob, literalQuestionMark) {
             }
         }
         else {
-            /** @type {?} */
             var processed = toEscape.reduce(function (segment, escape) { return segment.replace(escape.replace, escape.with); }, segment);
             regex += processed;
             if (segments.length > 0) {
@@ -133,17 +100,12 @@ function globToRegex(glob, literalQuestionMark) {
 }
 
 /**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
-/**
  * @license
  * Copyright Google Inc. All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-/** @type {?} */
 var DEFAULT_NAVIGATION_URLS = [
     '/**',
     '!/**/*.*',
@@ -153,22 +115,14 @@ var DEFAULT_NAVIGATION_URLS = [
 /**
  * Consumes service worker configuration files and processes them into control files.
  *
- * \@publicApi
+ * @publicApi
  */
 var Generator = /** @class */ (function () {
     function Generator(fs, baseHref) {
         this.fs = fs;
         this.baseHref = baseHref;
     }
-    /**
-     * @param {?} config
-     * @return {?}
-     */
-    Generator.prototype.process = /**
-     * @param {?} config
-     * @return {?}
-     */
-    function (config) {
+    Generator.prototype.process = function (config) {
         return __awaiter(this, void 0, void 0, function () {
             var unorderedHashTable, assetGroups;
             return __generator(this, function (_a) {
@@ -191,17 +145,7 @@ var Generator = /** @class */ (function () {
             });
         });
     };
-    /**
-     * @param {?} config
-     * @param {?} hashTable
-     * @return {?}
-     */
-    Generator.prototype.processAssetGroups = /**
-     * @param {?} config
-     * @param {?} hashTable
-     * @return {?}
-     */
-    function (config, hashTable) {
+    Generator.prototype.processAssetGroups = function (config, hashTable) {
         return __awaiter(this, void 0, void 0, function () {
             var seenMap;
             var _this = this;
@@ -227,7 +171,7 @@ var Generator = /** @class */ (function () {
                                     plainFiles.forEach(function (file) { return seenMap.add(file); });
                                     versionedFiles = allFiles.filter(versionedMatcher).filter(function (file) { return !seenMap.has(file); });
                                     versionedFiles.forEach(function (file) { return seenMap.add(file); });
-                                    matchedFiles = plainFiles.concat(versionedFiles).sort();
+                                    matchedFiles = __spread(plainFiles, versionedFiles).sort();
                                     return [4 /*yield*/, matchedFiles.reduce(function (previous, file) { return __awaiter(_this, void 0, void 0, function () {
                                             var hash;
                                             return __generator(this, function (_a) {
@@ -258,15 +202,7 @@ var Generator = /** @class */ (function () {
             });
         });
     };
-    /**
-     * @param {?} config
-     * @return {?}
-     */
-    Generator.prototype.processDataGroups = /**
-     * @param {?} config
-     * @return {?}
-     */
-    function (config) {
+    Generator.prototype.processDataGroups = function (config) {
         var _this = this;
         return (config.dataGroups || []).map(function (group) {
             return {
@@ -282,26 +218,15 @@ var Generator = /** @class */ (function () {
     };
     return Generator;
 }());
-/**
- * @param {?} baseHref
- * @param {?=} urls
- * @return {?}
- */
 function processNavigationUrls(baseHref, urls) {
     if (urls === void 0) { urls = DEFAULT_NAVIGATION_URLS; }
     return urls.map(function (url) {
-        /** @type {?} */
         var positive = !url.startsWith('!');
         url = positive ? url : url.substr(1);
         return { positive: positive, regex: "^" + urlToRegex(url, baseHref) + "$" };
     });
 }
-/**
- * @param {?} globs
- * @return {?}
- */
 function globListToMatcher(globs) {
-    /** @type {?} */
     var patterns = globs.map(function (pattern) {
         if (pattern.startsWith('!')) {
             return {
@@ -318,13 +243,7 @@ function globListToMatcher(globs) {
     });
     return function (file) { return matches(file, patterns); };
 }
-/**
- * @param {?} file
- * @param {?} patterns
- * @return {?}
- */
 function matches(file, patterns) {
-    /** @type {?} */
     var res = patterns.reduce(function (isMatch, pattern) {
         if (pattern.positive) {
             return isMatch || pattern.regex.test(file);
@@ -335,23 +254,12 @@ function matches(file, patterns) {
     }, false);
     return res;
 }
-/**
- * @param {?} url
- * @param {?} baseHref
- * @param {?=} literalQuestionMark
- * @return {?}
- */
 function urlToRegex(url, baseHref, literalQuestionMark) {
     if (!url.startsWith('/') && url.indexOf('://') === -1) {
         url = joinUrls(baseHref, url);
     }
     return globToRegex(url, literalQuestionMark);
 }
-/**
- * @param {?} a
- * @param {?} b
- * @return {?}
- */
 function joinUrls(a, b) {
     if (a.endsWith('/') && b.startsWith('/')) {
         return a + b.substr(1);
@@ -361,22 +269,12 @@ function joinUrls(a, b) {
     }
     return a + b;
 }
-/**
- * @template T
- * @param {?} unorderedObj
- * @return {?}
- */
 function withOrderedKeys(unorderedObj) {
-    /** @type {?} */
-    var orderedObj = /** @type {?} */ ({});
+    var orderedObj = {};
     Object.keys(unorderedObj).sort().forEach(function (key) { return orderedObj[key] = unorderedObj[key]; });
     return orderedObj;
 }
 
-/**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
- */
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
@@ -386,9 +284,13 @@ function withOrderedKeys(unorderedObj) {
  */
 
 /**
- * @fileoverview added by tsickle
- * @suppress {checkTypes,extraRequire,uselessCode} checked by tsc
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
  */
+
 /**
  * Generated bundle index. Do not edit.
  */

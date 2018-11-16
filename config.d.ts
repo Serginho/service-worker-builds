@@ -1,6 +1,8 @@
 /**
- * @license Angular v7.0.3-68104e067
+ * @license Angular v7.0.3+2.sha-628081c.with-local-changes
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
- */ 
- export * from './config/config'
+ */
+
+  export * from './config/config';
+  
