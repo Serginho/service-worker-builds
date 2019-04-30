@@ -1298,9 +1298,14 @@
         safeFetch(req) {
             return __awaiter$1(this, void 0, void 0, function* () {
                 try {
-                    const headers = new Headers({ ngTimeSw: Date.now().toString() });
-                    req.headers.forEach((value, key) => headers.set(key, value));
-                    return this.scope.fetch(new Request(req, { headers: headers }));
+                    if (req.url.includes('tuloteroweb/rest')) {
+                        const headers = new Headers({ ngTimeSw: Date.now().toString() });
+                        req.headers.forEach((value, key) => headers.set(key, value));
+                        return this.scope.fetch(new Request(req, { headers: headers }));
+                    }
+                    else {
+                        return this.scope.fetch(req);
+                    }
                 }
                 catch (_a) {
                     return this.adapter.newResponse(null, {
@@ -2794,9 +2799,14 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
         safeFetch(req) {
             return __awaiter$5(this, void 0, void 0, function* () {
                 try {
-                    const headers = new Headers({ ngTimeSw: Date.now().toString() });
-                    req.headers.forEach((value, key) => headers.set(key, value));
-                    return yield this.scope.fetch(new Request(req, { headers: headers }));
+                    if (req.url.includes('tuloteroweb/rest')) {
+                        const headers = new Headers({ ngTimeSw: Date.now().toString() });
+                        req.headers.forEach((value, key) => headers.set(key, value));
+                        return yield this.scope.fetch(new Request(req, { headers: headers }));
+                    }
+                    else {
+                        return yield this.scope.fetch(req);
+                    }
                 }
                 catch (err) {
                     this.debugger.log(err, `Driver.fetch(${req.url})`);
