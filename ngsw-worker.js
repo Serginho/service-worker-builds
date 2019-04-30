@@ -19,7 +19,7 @@
          * Wrapper around the `Request` constructor.
          */
         newRequest(input, init) {
-            return new Request(input, init);
+            return new Request(input, Object.assign({ headers: { ngTimeSw: Date.now() } }, init));
         }
         /**
          * Wrapper around the `Response` constructor.
