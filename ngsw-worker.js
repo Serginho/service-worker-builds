@@ -19,7 +19,7 @@
          * Wrapper around the `Request` constructor.
          */
         newRequest(input, init) {
-            return new Request(input, Object.assign({ headers: { ngTimeSw: Date.now() } }, init));
+            return new Request(input, init);
         }
         /**
          * Wrapper around the `Response` constructor.
@@ -1157,6 +1157,7 @@
             // If there is a timeout configured, race a timeout Promise with the network fetch.
             // Otherwise, just fetch from the network directly.
             if (this.config.timeoutMs !== undefined) {
+                req.headers.append('ngTimeSw', Date.now().toString());
                 const networkFetch = this.scope.fetch(req);
                 const safeNetworkFetch = (() => __awaiter$1(this, void 0, void 0, function* () {
                     try {
@@ -1298,6 +1299,7 @@
         safeFetch(req) {
             return __awaiter$1(this, void 0, void 0, function* () {
                 try {
+                    req.headers.append('ngTimeSw', Date.now().toString());
                     return this.scope.fetch(req);
                 }
                 catch (_a) {
@@ -2792,6 +2794,7 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
         safeFetch(req) {
             return __awaiter$5(this, void 0, void 0, function* () {
                 try {
+                    req.headers.append('ngTimeSw', Date.now().toString());
                     return yield this.scope.fetch(req);
                 }
                 catch (err) {
