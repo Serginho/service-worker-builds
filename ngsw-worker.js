@@ -1298,14 +1298,7 @@
         safeFetch(req) {
             return __awaiter$1(this, void 0, void 0, function* () {
                 try {
-                    if (req.url.includes('tuloteroweb/rest')) {
-                        const headers = new Headers({ ngTimeSw: Date.now().toString() });
-                        req.headers.forEach((value, key) => headers.set(key, value));
-                        return this.scope.fetch(new Request(req, { headers: headers }));
-                    }
-                    else {
-                        return this.scope.fetch(req);
-                    }
+                    return this.scope.fetch(req);
                 }
                 catch (_a) {
                     return this.adapter.newResponse(null, {
@@ -1668,6 +1661,36 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 .join('\n');
         }
     }
+    class ServerDebug {
+        constructor(scope, adapter, manifest) {
+            this.scope = scope;
+            this.adapter = adapter;
+            this.manifest = manifest;
+        }
+        log(value, context) {
+            if (this.manifest.debug) {
+                const errorMessage = typeof (value) === 'string' ? value : this.errorToString(value);
+                const body = {};
+                body['type'] = 'WEB';
+                body['message'] = 'Service worker log: ' + errorMessage;
+                body['device'] = this.scope.navigator.userAgent;
+                if (context) {
+                    try {
+                        body['context'] = JSON.stringify(context);
+                    }
+                    catch (e) {
+                        body['context'] = 'Failed to stringfy context, test serialize it';
+                    }
+                }
+                const req = this.adapter.newRequest(this.manifest.debug.endpoint, {
+                    method: 'PUT',
+                    body: JSON.stringify(body)
+                });
+                this.scope.fetch(req);
+            }
+        }
+        errorToString(err) { return `${err.name}(${err.message}, ${err.stack})`; }
+    }
 
     /**
      * @license
@@ -1928,7 +1951,12 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
             if (this.adapter.parseUrl(req.url, this.scope.registration.scope).path === '/ngsw/state') {
                 // Allow the debugger to handle the request, but don't affect SW state in any
                 // other way.
-                event.respondWith(this.debugger.handleFetch(req));
+                if (this.debugger instanceof DebugHandler) {
+                    event.respondWith(this.debugger.handleFetch(req));
+                }
+                else {
+                    event.respondWith(this.adapter.newResponse('Debugger is configured to log on server', { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }) }));
+                }
                 return;
             }
             // If the SW is in a broken state where it's not safe to handle requests at all,
@@ -2343,6 +2371,8 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 });
                 // Set the latest version.
                 this.latestHash = latest.latest;
+                // Change debugger to server if it's configured to that.
+                this.checkDebuggerInstance();
                 // Finally, assert that the latest version is in fact loaded.
                 if (!this.versions.has(latest.latest)) {
                     throw new Error(`Invariant violated (initialize): latest hash ${latest.latest} has no known manifest`);
@@ -2566,6 +2596,8 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 this.versions.set(hash, newVersion);
                 // Future new clients will use this hash as the latest version.
                 this.latestHash = hash;
+                // Change debugger if manifest has configuration about
+                this.checkDebuggerInstance();
                 yield this.sync();
                 yield this.notifyClientsAboutUpdate();
             });
@@ -2703,6 +2735,20 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 return version.lookupResourceWithHash(url, hash);
             }), Promise.resolve(null));
         }
+        /**
+         * Determine what debugger should use reading the manifest
+         */
+        checkDebuggerInstance() {
+            if (this.latestHash) {
+                const appVersion = this.versions.get(this.latestHash);
+                if (appVersion && appVersion.manifest && appVersion.manifest.debug) {
+                    this.debugger = new ServerDebug(this.scope, this.adapter, appVersion.manifest);
+                }
+                else if (this.debugger instanceof ServerDebug) {
+                    this.debugger = new DebugHandler(this, this.adapter);
+                }
+            }
+        }
         lookupResourceWithoutHash(url) {
             return __awaiter$5(this, void 0, void 0, function* () {
                 yield this.initialized;
@@ -2799,14 +2845,7 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
         safeFetch(req) {
             return __awaiter$5(this, void 0, void 0, function* () {
                 try {
-                    if (req.url.includes('tuloteroweb/rest')) {
-                        const headers = new Headers({ ngTimeSw: Date.now().toString() });
-                        req.headers.forEach((value, key) => headers.set(key, value));
-                        return yield this.scope.fetch(new Request(req, { headers: headers }));
-                    }
-                    else {
-                        return yield this.scope.fetch(req);
-                    }
+                    return yield this.scope.fetch(req);
                 }
                 catch (err) {
                     this.debugger.log(err, `Driver.fetch(${req.url})`);
