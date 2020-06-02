@@ -1,6 +1,6 @@
 /**
- * @license Angular v8.2.14+3.sha-d2f7315
- * (c) 2010-2019 Google LLC. https://angular.io/
+ * @license Angular v9.1.9+545.sha-0a43290
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -16,9 +16,6 @@ export declare interface AssetGroup {
     updateMode?: 'prefetch' | 'lazy';
     resources: {
         files?: Glob[];
-        /** @deprecated As of v6 `versionedFiles` and `files` options have the same behavior. Use
-           `files` instead. */
-        versionedFiles?: Glob[];
         urls?: Glob[];
     };
 }

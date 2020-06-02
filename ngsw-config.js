@@ -39,7 +39,7 @@
     }
     function _sha1(words32, len) {
         var _a, _b;
-        var w = new Array(80);
+        var w = [];
         var _c = __read([0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0], 5), a = _c[0], b = _c[1], c = _c[2], d = _c[3], e = _c[4];
         words32[len >> 5] |= 0x80 << (24 - len % 32);
         words32[((len + 64 >> 9) << 4) + 15] = len;
@@ -90,9 +90,10 @@
         return [b ^ c ^ d, 0xca62c1d6];
     }
     function arrayBufferToWords32(buffer, endian) {
-        var words32 = Array((buffer.byteLength + 3) >>> 2);
+        var size = (buffer.byteLength + 3) >>> 2;
+        var words32 = [];
         var view = new Uint8Array(buffer);
-        for (var i = 0; i < words32.length; i++) {
+        for (var i = 0; i < size; i++) {
             words32[i] = wordAt(view, i * 4, endian);
         }
         return words32;
@@ -146,6 +147,7 @@
      * found in the LICENSE file at https://angular.io/license
      */
     var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try {
                 step(generator.next(value));
@@ -159,7 +161,7 @@
             catch (e) {
                 reject(e);
             } }
-            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
@@ -295,7 +297,9 @@
                 });
             });
         };
-        NodeFilesystem.prototype.canonical = function (_path) { return path.posix.join(this.base, _path); };
+        NodeFilesystem.prototype.canonical = function (_path) {
+            return path.posix.join(this.base, _path);
+        };
         return NodeFilesystem;
     }());
 
@@ -307,6 +311,7 @@
      * found in the LICENSE file at https://angular.io/license
      */
     var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try {
                 step(generator.next(value));
@@ -320,7 +325,7 @@
             catch (e) {
                 reject(e);
             } }
-            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
@@ -393,7 +398,6 @@
             return { value: op[0] ? op[1] : void 0, done: true };
         }
     };
-    var _this = undefined;
     var _a = require('@angular/service-worker/config'), Generator = _a.Generator, NgswConfig = _a.NgswConfig;
     var fs$1 = require('fs');
     var path$1 = require('path');
@@ -405,7 +409,7 @@
     var filesystem = new NodeFilesystem(distDir);
     var gen = new Generator(filesystem, baseHref);
     (function () {
-        return __awaiter$1(_this, void 0, void 0, function () {
+        return __awaiter$1(void 0, void 0, void 0, function () {
             var control;
             return __generator$1(this, function (_a) {
                 switch (_a.label) {

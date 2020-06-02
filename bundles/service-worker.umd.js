@@ -1,6 +1,6 @@
 /**
- * @license Angular v8.2.14+3.sha-d2f7315
- * (c) 2010-2019 Google LLC. https://angular.io/
+ * @license Angular v9.1.9+545.sha-0a43290
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -8,7 +8,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/common'), require('@angular/core'), require('rxjs'), require('rxjs/operators')) :
     typeof define === 'function' && define.amd ? define('@angular/service-worker', ['exports', '@angular/common', '@angular/core', 'rxjs', 'rxjs/operators'], factory) :
     (global = global || self, factory((global.ng = global.ng || {}, global.ng.serviceWorker = {}), global.ng.common, global.ng.core, global.rxjs, global.rxjs.operators));
-}(this, function (exports, common, core, rxjs, operators) { 'use strict';
+}(this, (function (exports, common, core, rxjs, operators) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,8 +55,10 @@
         for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
             t[p] = s[p];
         if (s != null && typeof Object.getOwnPropertySymbols === "function")
-            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
-                t[p[i]] = s[p[i]];
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                    t[p[i]] = s[p[i]];
+            }
         return t;
     }
 
@@ -76,10 +78,11 @@
     }
 
     function __awaiter(thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
             function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     }
@@ -117,14 +120,15 @@
     }
 
     function __values(o) {
-        var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+        var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
         if (m) return m.call(o);
-        return {
+        if (o && typeof o.length === "number") return {
             next: function () {
                 if (o && i >= o.length) o = void 0;
                 return { value: o && o[i++], done: !o };
             }
         };
+        throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
     }
 
     function __read(o, n) {
@@ -149,6 +153,14 @@
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
+
+    function __spreadArrays() {
+        for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+        for (var r = Array(s), k = 0, i = 0; i < il; i++)
+            for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+                r[k] = a[j];
+        return r;
+    };
 
     function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
@@ -195,6 +207,21 @@
 
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
+    }
+
+    function __classPrivateFieldGet(receiver, privateMap) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to get private field on non-instance");
+        }
+        return privateMap.get(receiver);
+    }
+
+    function __classPrivateFieldSet(receiver, privateMap, value) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to set private field on non-instance");
+        }
+        privateMap.set(receiver, value);
+        return value;
     }
 
     /**
@@ -245,7 +272,9 @@
             var postMessage = this.postMessage(type, payload);
             return Promise.all([waitForStatus, postMessage]).then(function () { return undefined; });
         };
-        NgswCommChannel.prototype.generateNonce = function () { return Math.round(Math.random() * 10000000); };
+        NgswCommChannel.prototype.generateNonce = function () {
+            return Math.round(Math.random() * 10000000);
+        };
         NgswCommChannel.prototype.eventsOfType = function (type) {
             var filterFn = function (event) { return event.type === type; };
             return this.events.pipe(operators.filter(filterFn));
@@ -264,7 +293,9 @@
                 .toPromise();
         };
         Object.defineProperty(NgswCommChannel.prototype, "isEnabled", {
-            get: function () { return !!this.serviceWorker; },
+            get: function () {
+                return !!this.serviceWorker;
+            },
             enumerable: true,
             configurable: true
         });
@@ -280,22 +311,25 @@
      */
     /**
      * Subscribe and listen to
-     * [Web Push Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices)
-     * through Angular Service Worker.
+     * [Web Push
+     * Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices) through
+     * Angular Service Worker.
      *
      * @usageNotes
      *
      * You can inject a `SwPush` instance into any component or service
      * as a dependency.
      *
-     * <code-example path="service-worker/push/module.ts" region="inject-sw-push" header="app.component.ts"></code-example>
+     * <code-example path="service-worker/push/module.ts" region="inject-sw-push"
+     * header="app.component.ts"></code-example>
      *
      * To subscribe, call `SwPush.requestSubscription()`, which asks the user for permission.
      * The call returns a `Promise` with a new
      * [`PushSubscription`](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription)
      * instance.
      *
-     * <code-example path="service-worker/push/module.ts" region="subscribe-to-push" header="app.component.ts"></code-example>
+     * <code-example path="service-worker/push/module.ts" region="subscribe-to-push"
+     * header="app.component.ts"></code-example>
      *
      * A request is rejected if the user denies permission, or if the browser
      * blocks or does not support the Push API or ServiceWorkers.
@@ -326,7 +360,8 @@
      * ```
      *
      * Only `title` is required. See `Notification`
-     * [instance properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
+     * [instance
+     * properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
      *
      * While the subscription is active, Service Worker listens for
      * [PushEvent](https://developer.mozilla.org/en-US/docs/Web/API/PushEvent)
@@ -339,7 +374,8 @@
      * An application can subscribe to `SwPush.notificationClicks` observable to be notified when a user
      * clicks on a notification. For example:
      *
-     * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks" header="app.component.ts"></code-example>
+     * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks"
+     * header="app.component.ts"></code-example>
      *
      * @see [Push Notifications](https://developers.google.com/web/fundamentals/codelabs/push-notifications/)
      * @see [Angular Push Notifications](https://blog.angular-university.io/angular-push-notifications/)
@@ -351,7 +387,6 @@
      */
     var SwPush = /** @class */ (function () {
         function SwPush(sw) {
-            var _this = this;
             this.sw = sw;
             this.subscriptionChanges = new rxjs.Subject();
             if (!sw.isEnabled) {
@@ -366,34 +401,18 @@
             this.pushManager = this.sw.registration.pipe(operators.map(function (registration) { return registration.pushManager; }));
             var workerDrivenSubscriptions = this.pushManager.pipe(operators.switchMap(function (pm) { return pm.getSubscription(); }));
             this.subscription = rxjs.merge(workerDrivenSubscriptions, this.subscriptionChanges);
-            this.subscription.subscribe(function (subscription) {
-                var pushData = {
-                    action: 'STATUS_PUSH',
-                    statusNonce: _this.sw.generateNonce(),
-                    subscription: null
-                };
-                if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
-                    pushData.subscription = JSON.parse(JSON.stringify(subscription));
-                }
-                _this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
-            });
         }
         Object.defineProperty(SwPush.prototype, "isEnabled", {
             /**
              * True if the Service Worker is enabled (supported by the browser and enabled via
              * `ServiceWorkerModule`).
              */
-            get: function () { return this.sw.isEnabled; },
+            get: function () {
+                return this.sw.isEnabled;
+            },
             enumerable: true,
             configurable: true
         });
-        /**
-         * Subscribes to Web Push Notifications,
-         * after requesting and receiving user permission.
-         *
-         * @param options An object containing the `serverPublicKey` string.
-         * @returns A Promise that resolves to the new subscription object.
-         */
         SwPush.prototype.requestSubscription = function (options) {
             var _this = this;
             if (!this.sw.isEnabled) {
@@ -413,12 +432,6 @@
                 return sub;
             });
         };
-        /**
-         * Unsubscribes from Service Worker push notifications.
-         *
-         * @returns A Promise that is resolved when the operation succeeds, or is rejected if there is no
-         *          active subscription or the unsubscribe operation fails.
-         */
         SwPush.prototype.unsubscribe = function () {
             var _this = this;
             if (!this.sw.isEnabled) {
@@ -437,7 +450,9 @@
             };
             return this.subscription.pipe(operators.take(1), operators.switchMap(doUnsubscribe)).toPromise();
         };
-        SwPush.prototype.decodeBase64 = function (input) { return atob(input); };
+        SwPush.prototype.decodeBase64 = function (input) {
+            return atob(input);
+        };
         SwPush = __decorate([
             core.Injectable(),
             __metadata("design:paramtypes", [NgswCommChannel])
@@ -474,7 +489,9 @@
              * True if the Service Worker is enabled (supported by the browser and enabled via
              * `ServiceWorkerModule`).
              */
-            get: function () { return this.sw.isEnabled; },
+            get: function () {
+                return this.sw.isEnabled;
+            },
             enumerable: true,
             configurable: true
         });
@@ -643,16 +660,16 @@
      * Generated bundle index. Do not edit.
      */
 
+    exports.ServiceWorkerModule = ServiceWorkerModule;
+    exports.SwPush = SwPush;
+    exports.SwRegistrationOptions = SwRegistrationOptions;
+    exports.SwUpdate = SwUpdate;
     exports.ɵangular_packages_service_worker_service_worker_a = NgswCommChannel;
     exports.ɵangular_packages_service_worker_service_worker_b = SCRIPT;
     exports.ɵangular_packages_service_worker_service_worker_c = ngswAppInitializer;
     exports.ɵangular_packages_service_worker_service_worker_d = ngswCommChannelFactory;
-    exports.ServiceWorkerModule = ServiceWorkerModule;
-    exports.SwRegistrationOptions = SwRegistrationOptions;
-    exports.SwPush = SwPush;
-    exports.SwUpdate = SwUpdate;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=service-worker.umd.js.map

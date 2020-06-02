@@ -1,6 +1,6 @@
 /**
- * @license Angular v8.2.14+3.sha-d2f7315
- * (c) 2010-2019 Google LLC. https://angular.io/
+ * @license Angular v9.1.9+545.sha-0a43290
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -24,22 +24,25 @@ export declare class ServiceWorkerModule {
 
 /**
  * Subscribe and listen to
- * [Web Push Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices)
- * through Angular Service Worker.
+ * [Web Push
+ * Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices) through
+ * Angular Service Worker.
  *
  * @usageNotes
  *
  * You can inject a `SwPush` instance into any component or service
  * as a dependency.
  *
- * <code-example path="service-worker/push/module.ts" region="inject-sw-push" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="inject-sw-push"
+ * header="app.component.ts"></code-example>
  *
  * To subscribe, call `SwPush.requestSubscription()`, which asks the user for permission.
  * The call returns a `Promise` with a new
  * [`PushSubscription`](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription)
  * instance.
  *
- * <code-example path="service-worker/push/module.ts" region="subscribe-to-push" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-push"
+ * header="app.component.ts"></code-example>
  *
  * A request is rejected if the user denies permission, or if the browser
  * blocks or does not support the Push API or ServiceWorkers.
@@ -70,7 +73,8 @@ export declare class ServiceWorkerModule {
  * ```
  *
  * Only `title` is required. See `Notification`
- * [instance properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
+ * [instance
+ * properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
  *
  * While the subscription is active, Service Worker listens for
  * [PushEvent](https://developer.mozilla.org/en-US/docs/Web/API/PushEvent)
@@ -83,7 +87,8 @@ export declare class ServiceWorkerModule {
  * An application can subscribe to `SwPush.notificationClicks` observable to be notified when a user
  * clicks on a notification. For example:
  *
- * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks"
+ * header="app.component.ts"></code-example>
  *
  * @see [Push Notifications](https://developers.google.com/web/fundamentals/codelabs/push-notifications/)
  * @see [Angular Push Notifications](https://blog.angular-university.io/angular-push-notifications/)
@@ -101,10 +106,10 @@ export declare class SwPush {
     readonly messages: Observable<object>;
     /**
      * Emits the payloads of the received push notification messages as well as the action the user
-     * interacted with. If no action was used the `action` property contains an empty string `''`.
+     * interacted with. If no action was used the action property will be an empty string `''`.
      *
-     * Note that the `notification` property does **not** contain a
-     * [Notification][Mozilla Notification] object but rather a
+     * Note that the `notification` property is **not** a [Notification][Mozilla Notification] object
+     * but rather a
      * [NotificationOptions](https://notifications.spec.whatwg.org/#dictdef-notificationoptions)
      * object that also includes the `title` of the [Notification][Mozilla Notification] object.
      *
@@ -126,26 +131,13 @@ export declare class SwPush {
      * True if the Service Worker is enabled (supported by the browser and enabled via
      * `ServiceWorkerModule`).
      */
-    readonly isEnabled: boolean;
+    get isEnabled(): boolean;
     private pushManager;
     private subscriptionChanges;
     constructor(sw: ɵangular_packages_service_worker_service_worker_a);
-    /**
-     * Subscribes to Web Push Notifications,
-     * after requesting and receiving user permission.
-     *
-     * @param options An object containing the `serverPublicKey` string.
-     * @returns A Promise that resolves to the new subscription object.
-     */
     requestSubscription(options: {
         serverPublicKey: string;
     }): Promise<PushSubscription>;
-    /**
-     * Unsubscribes from Service Worker push notifications.
-     *
-     * @returns A Promise that is resolved when the operation succeeds, or is rejected if there is no
-     *          active subscription or the unsubscribe operation fails.
-     */
     unsubscribe(): Promise<void>;
     private decodeBase64;
 }
@@ -224,7 +216,7 @@ export declare class SwUpdate {
      * True if the Service Worker is enabled (supported by the browser and enabled via
      * `ServiceWorkerModule`).
      */
-    readonly isEnabled: boolean;
+    get isEnabled(): boolean;
     constructor(sw: ɵangular_packages_service_worker_service_worker_a);
     checkForUpdate(): Promise<void>;
     activateUpdate(): Promise<void>;
@@ -283,7 +275,7 @@ export declare class ɵangular_packages_service_worker_service_worker_a {
     eventsOfType<T extends TypedEvent>(type: T['type']): Observable<T>;
     nextEventOfType<T extends TypedEvent>(type: T['type']): Observable<T>;
     waitForStatus(nonce: number): Promise<void>;
-    readonly isEnabled: boolean;
+    get isEnabled(): boolean;
 }
 
 export declare const ɵangular_packages_service_worker_service_worker_b: InjectionToken<string>;

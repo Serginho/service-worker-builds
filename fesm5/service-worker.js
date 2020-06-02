@@ -1,6 +1,6 @@
 /**
- * @license Angular v8.2.14+3.sha-d2f7315
- * (c) 2010-2019 Google LLC. https://angular.io/
+ * @license Angular v9.1.9+545.sha-0a43290
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -58,7 +58,9 @@ var NgswCommChannel = /** @class */ (function () {
         var postMessage = this.postMessage(type, payload);
         return Promise.all([waitForStatus, postMessage]).then(function () { return undefined; });
     };
-    NgswCommChannel.prototype.generateNonce = function () { return Math.round(Math.random() * 10000000); };
+    NgswCommChannel.prototype.generateNonce = function () {
+        return Math.round(Math.random() * 10000000);
+    };
     NgswCommChannel.prototype.eventsOfType = function (type) {
         var filterFn = function (event) { return event.type === type; };
         return this.events.pipe(filter(filterFn));
@@ -77,7 +79,9 @@ var NgswCommChannel = /** @class */ (function () {
             .toPromise();
     };
     Object.defineProperty(NgswCommChannel.prototype, "isEnabled", {
-        get: function () { return !!this.serviceWorker; },
+        get: function () {
+            return !!this.serviceWorker;
+        },
         enumerable: true,
         configurable: true
     });
@@ -93,22 +97,25 @@ var NgswCommChannel = /** @class */ (function () {
  */
 /**
  * Subscribe and listen to
- * [Web Push Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices)
- * through Angular Service Worker.
+ * [Web Push
+ * Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices) through
+ * Angular Service Worker.
  *
  * @usageNotes
  *
  * You can inject a `SwPush` instance into any component or service
  * as a dependency.
  *
- * <code-example path="service-worker/push/module.ts" region="inject-sw-push" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="inject-sw-push"
+ * header="app.component.ts"></code-example>
  *
  * To subscribe, call `SwPush.requestSubscription()`, which asks the user for permission.
  * The call returns a `Promise` with a new
  * [`PushSubscription`](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription)
  * instance.
  *
- * <code-example path="service-worker/push/module.ts" region="subscribe-to-push" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-push"
+ * header="app.component.ts"></code-example>
  *
  * A request is rejected if the user denies permission, or if the browser
  * blocks or does not support the Push API or ServiceWorkers.
@@ -139,7 +146,8 @@ var NgswCommChannel = /** @class */ (function () {
  * ```
  *
  * Only `title` is required. See `Notification`
- * [instance properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
+ * [instance
+ * properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
  *
  * While the subscription is active, Service Worker listens for
  * [PushEvent](https://developer.mozilla.org/en-US/docs/Web/API/PushEvent)
@@ -152,7 +160,8 @@ var NgswCommChannel = /** @class */ (function () {
  * An application can subscribe to `SwPush.notificationClicks` observable to be notified when a user
  * clicks on a notification. For example:
  *
- * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks" header="app.component.ts"></code-example>
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks"
+ * header="app.component.ts"></code-example>
  *
  * @see [Push Notifications](https://developers.google.com/web/fundamentals/codelabs/push-notifications/)
  * @see [Angular Push Notifications](https://blog.angular-university.io/angular-push-notifications/)
@@ -164,7 +173,6 @@ var NgswCommChannel = /** @class */ (function () {
  */
 var SwPush = /** @class */ (function () {
     function SwPush(sw) {
-        var _this = this;
         this.sw = sw;
         this.subscriptionChanges = new Subject();
         if (!sw.isEnabled) {
@@ -179,34 +187,18 @@ var SwPush = /** @class */ (function () {
         this.pushManager = this.sw.registration.pipe(map(function (registration) { return registration.pushManager; }));
         var workerDrivenSubscriptions = this.pushManager.pipe(switchMap(function (pm) { return pm.getSubscription(); }));
         this.subscription = merge(workerDrivenSubscriptions, this.subscriptionChanges);
-        this.subscription.subscribe(function (subscription) {
-            var pushData = {
-                action: 'STATUS_PUSH',
-                statusNonce: _this.sw.generateNonce(),
-                subscription: null
-            };
-            if (typeof (PushSubscription) === 'function' && subscription instanceof PushSubscription) {
-                pushData.subscription = JSON.parse(JSON.stringify(subscription));
-            }
-            _this.sw.postMessageWithStatus('STATUS_PUSH', pushData, pushData.statusNonce);
-        });
     }
     Object.defineProperty(SwPush.prototype, "isEnabled", {
         /**
          * True if the Service Worker is enabled (supported by the browser and enabled via
          * `ServiceWorkerModule`).
          */
-        get: function () { return this.sw.isEnabled; },
+        get: function () {
+            return this.sw.isEnabled;
+        },
         enumerable: true,
         configurable: true
     });
-    /**
-     * Subscribes to Web Push Notifications,
-     * after requesting and receiving user permission.
-     *
-     * @param options An object containing the `serverPublicKey` string.
-     * @returns A Promise that resolves to the new subscription object.
-     */
     SwPush.prototype.requestSubscription = function (options) {
         var _this = this;
         if (!this.sw.isEnabled) {
@@ -226,12 +218,6 @@ var SwPush = /** @class */ (function () {
             return sub;
         });
     };
-    /**
-     * Unsubscribes from Service Worker push notifications.
-     *
-     * @returns A Promise that is resolved when the operation succeeds, or is rejected if there is no
-     *          active subscription or the unsubscribe operation fails.
-     */
     SwPush.prototype.unsubscribe = function () {
         var _this = this;
         if (!this.sw.isEnabled) {
@@ -250,7 +236,9 @@ var SwPush = /** @class */ (function () {
         };
         return this.subscription.pipe(take(1), switchMap(doUnsubscribe)).toPromise();
     };
-    SwPush.prototype.decodeBase64 = function (input) { return atob(input); };
+    SwPush.prototype.decodeBase64 = function (input) {
+        return atob(input);
+    };
     SwPush = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [NgswCommChannel])
@@ -287,7 +275,9 @@ var SwUpdate = /** @class */ (function () {
          * True if the Service Worker is enabled (supported by the browser and enabled via
          * `ServiceWorkerModule`).
          */
-        get: function () { return this.sw.isEnabled; },
+        get: function () {
+            return this.sw.isEnabled;
+        },
         enumerable: true,
         configurable: true
     });
@@ -456,5 +446,5 @@ var ServiceWorkerModule = /** @class */ (function () {
  * Generated bundle index. Do not edit.
  */
 
-export { NgswCommChannel as ɵangular_packages_service_worker_service_worker_a, SCRIPT as ɵangular_packages_service_worker_service_worker_b, ngswAppInitializer as ɵangular_packages_service_worker_service_worker_c, ngswCommChannelFactory as ɵangular_packages_service_worker_service_worker_d, ServiceWorkerModule, SwRegistrationOptions, SwPush, SwUpdate };
+export { ServiceWorkerModule, SwPush, SwRegistrationOptions, SwUpdate, NgswCommChannel as ɵangular_packages_service_worker_service_worker_a, SCRIPT as ɵangular_packages_service_worker_service_worker_b, ngswAppInitializer as ɵangular_packages_service_worker_service_worker_c, ngswCommChannelFactory as ɵangular_packages_service_worker_service_worker_d };
 //# sourceMappingURL=service-worker.js.map

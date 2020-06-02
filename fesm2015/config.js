@@ -1,6 +1,6 @@
 /**
- * @license Angular v8.2.14+3.sha-d2f7315
- * (c) 2010-2019 Google LLC. https://angular.io/
+ * @license Angular v9.1.9+545.sha-0a43290
+ * (c) 2010-2020 Google LLC. https://angular.io/
  * License: MIT
  */
 
@@ -8,6 +8,7 @@ import { __awaiter } from 'tslib';
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: packages/service-worker/config/src/duration.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /**
@@ -77,6 +78,7 @@ function parseDurationToMs(duration) {
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: packages/service-worker/config/src/glob.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /**
@@ -150,6 +152,7 @@ function globToRegex(glob, literalQuestionMark = false) {
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: packages/service-worker/config/src/generator.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 /** @type {?} */
@@ -189,7 +192,8 @@ class Generator {
                 appData: config.appData,
                 push: config.push,
                 debug: config.debug,
-                index: joinUrls(this.baseHref, config.index), assetGroups,
+                index: joinUrls(this.baseHref, config.index),
+                assetGroups,
                 dataGroups: this.processDataGroups(config),
                 hashTable: withOrderedKeys(unorderedHashTable),
                 navigationUrls: processNavigationUrls(this.baseHref, config.navigationUrls),
@@ -211,42 +215,26 @@ class Generator {
              * @return {?}
              */
             (group) => __awaiter(this, void 0, void 0, function* () {
-                if (group.resources.versionedFiles) {
-                    console.warn(`Asset-group '${group.name}' in 'ngsw-config.json' uses the 'versionedFiles' option.\n` +
-                        'As of v6 \'versionedFiles\' and \'files\' options have the same behavior. ' +
-                        'Use \'files\' instead.');
+                if (((/** @type {?} */ (group.resources))).versionedFiles) {
+                    throw new Error(`Asset-group '${group.name}' in 'ngsw-config.json' uses the 'versionedFiles' option, ` +
+                        'which is no longer supported. Use \'files\' instead.');
                 }
                 /** @type {?} */
                 const fileMatcher = globListToMatcher(group.resources.files || []);
                 /** @type {?} */
-                const versionedMatcher = globListToMatcher(group.resources.versionedFiles || []);
-                /** @type {?} */
                 const allFiles = yield this.fs.list('/');
                 /** @type {?} */
-                const plainFiles = allFiles.filter(fileMatcher).filter((/**
+                const matchedFiles = allFiles.filter(fileMatcher).filter((/**
                  * @param {?} file
                  * @return {?}
                  */
-                file => !seenMap.has(file)));
-                plainFiles.forEach((/**
-                 * @param {?} file
-                 * @return {?}
-                 */
-                file => seenMap.add(file)));
-                /** @type {?} */
-                const versionedFiles = allFiles.filter(versionedMatcher).filter((/**
-                 * @param {?} file
-                 * @return {?}
-                 */
-                file => !seenMap.has(file)));
-                versionedFiles.forEach((/**
+                file => !seenMap.has(file))).sort();
+                matchedFiles.forEach((/**
                  * @param {?} file
                  * @return {?}
                  */
                 file => seenMap.add(file)));
                 // Add the hashes.
-                /** @type {?} */
-                const matchedFiles = [...plainFiles, ...versionedFiles].sort();
                 yield matchedFiles.reduce((/**
                  * @param {?} previous
                  * @param {?} file
@@ -425,11 +413,13 @@ function withOrderedKeys(unorderedObj) {
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: packages/service-worker/config/public_api.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
 /**
  * @fileoverview added by tsickle
+ * Generated from: packages/service-worker/config/index.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
 
